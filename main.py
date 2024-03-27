@@ -1,8 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-with open("index.html") as file:
-    src = file.read()
 
 soup = BeautifulSoup(src, "lxml")
 
