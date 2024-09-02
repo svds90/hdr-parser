@@ -1,4 +1,4 @@
-from utils import CollectorConfig
+from utils import CollectorConfig, ContentLink
 
 import logging
 
@@ -6,10 +6,13 @@ logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s:%(mes
 
 
 cfg = CollectorConfig()
+link = ContentLink(cfg.primary_domain, cfg.content_type)
 
 print(cfg.collector_config)
 print(cfg.enabled_domains)
-print(cfg.primary_domains)
+print(cfg.primary_domain)
+
+print(link)
 
 # user = UserAgent().random
 # headers = {'user-agent': user}
