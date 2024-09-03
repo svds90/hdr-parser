@@ -1,24 +1,25 @@
 from utils import CollectorConfig, ContentLink
+from fake_useragent import UserAgent
 
 import logging
+import requests
+from bs4 import BeautifulSoup
 
 logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s:%(message)s')
 
 
-cfg = CollectorConfig()
-link = ContentLink(cfg.primary_domain, cfg.content_type)
+class CollectorInit:
+    def __init__(self) -> None:
+        self.config = CollectorConfig()
+        self.link = ContentLink(self.config.primary_domain, self.config.content_type)
+        self.user_agent = UserAgent().random
+        self.headers = {'user-agent': self.user_agent}
 
-print(cfg.collector_config)
-print(cfg.enabled_domains)
-print(cfg.primary_domain)
 
-print(link)
+collector = CollectorInit()
 
-# user = UserAgent().random
-# headers = {'user-agent': user}
-#
-# response = requests.get(link, headers=headers).text
-# soup: Optional[BeautifulSoup] = BeautifulSoup(response, 'lxml')
+print(collector.headers)
+
 #
 # if soup:
 #     block: Optional[Tag] = soup.find('div', class_='b-content__inline_items')
