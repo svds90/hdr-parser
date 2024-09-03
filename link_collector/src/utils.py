@@ -50,7 +50,7 @@ class ContentLink:
         self.__content_link = self._generate()
 
     def _generate(self):
-        return f"https://{self.base_url}/{self.content_type}/best/page/1/"
+        return f"https://{self.base_url}/{self.content_type}/best/page/"
 
     def __str__(self):
         return self.__content_link
