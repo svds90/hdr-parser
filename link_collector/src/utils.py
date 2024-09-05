@@ -53,8 +53,8 @@ class CollectorConfig:
 
         if 'last_page' in kwargs:
 
-            self.__collector_config['page_range']['last_page'] = kwargs['last_page']
-            self.last_page = kwargs['last_page']
+            self.__collector_config['page_range']['last_page'] = int(kwargs['last_page'])
+            self.last_page = int(kwargs['last_page'])
 
         if 'last_parsed_page' in kwargs:
             self.__collector_config['page_range']['last_parsed_page'] = kwargs['last_parsed_page']
