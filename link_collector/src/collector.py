@@ -31,8 +31,10 @@ class LinkCollector:
             anchor_tags = navigation_block.find_all(
                 'a', href=True, string=lambda text: text and text.isdigit()
             )
-            last_page = max(anchor_tags, key=lambda x: int(x.text))
-            return last_page.text
+            current_last_page = max(anchor_tags, key=lambda x: int(x.text))
+            if int(self.config.last_page) != int(current_last_page.text):
+                self.config._update_pages_info(last_page=current_last_page.text)
+            return current_last_page.text
         else:
             return None
 
@@ -58,7 +60,10 @@ class LinkCollector:
 
 
 link_collector = LinkCollector()
+link_collector.config._update_pages_info(last_page=21, last_parsed_page=228, first_page='14')
+print(link_collector.config.first_page)
 print(link_collector.config.last_page)
+print(link_collector.config.last_parsed_page)
 
 # soup = BeautifulSoup(html, 'lxml')
 # nav_block = soup.find('div', class_='b-navigation')
