@@ -36,7 +36,7 @@ class LinkCollector:
         else:
             return None
 
-    def collect(self, first_page=1, last_page=2):
+    def collect(self, first_page=1, last_page=11):
 
         count = first_page
         print(f"{self.url}{count}/")
@@ -58,7 +58,7 @@ class LinkCollector:
 
 
 link_collector = LinkCollector()
-print(link_collector.collect())
+print(link_collector.config.last_page)
 
 # soup = BeautifulSoup(html, 'lxml')
 # nav_block = soup.find('div', class_='b-navigation')

@@ -12,6 +12,7 @@ class CollectorConfig:
         self.__collector_config = self._load_config()
         self.content_type = self._get_content_type()
         self.enabled_domains, self.primary_domain, self.secondary_domains = self._get_domains()
+        self.first_page, self.last_page, self.last_parsed_page = self._get_page_info()
 
     def _load_config(self):
         cfg_path = Path(__file__).resolve().parent.parent / self.filename
@@ -38,6 +39,11 @@ class CollectorConfig:
 
     def _get_content_type(self):
         return self.__collector_config['content_type']
+
+    def _get_page_info(self):
+
+        first_page, last_page, last_parsed_page = self.__collector_config['page_range'].values()
+        return first_page, last_page, last_parsed_page
 
 
 class ContentLink:
