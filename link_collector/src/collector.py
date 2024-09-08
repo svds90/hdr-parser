@@ -1,4 +1,4 @@
-from utils import CollectorConfig, ContentLink
+from utils import CollectorConfig, ContentLink, LinkFileHandler
 from fake_useragent import UserAgent
 
 import logging
@@ -6,7 +6,6 @@ import requests
 import lxml
 import sys
 from bs4 import BeautifulSoup
-from requests.adapters import HTTPAdapter
 
 logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s:%(message)s')
 
@@ -15,6 +14,7 @@ class LinkCollector:
     def __init__(self) -> None:
         self.config = CollectorConfig()
         self.url = ContentLink(self.config.primary_domain, self.config.content_type)
+        self.file_handler = LinkFileHandler('links.txt', self.config.page_buffer_size)
         self.__update_headers()
 
     def __update_headers(self):
@@ -49,34 +49,31 @@ class LinkCollector:
             return None
 
     def collect_pages(self, start=None, stop=None):
-        if self.config.last_parsed_page is None:
-            count = 1
-        else:
-            count = self.config.last_parsed_page
+        current_page = 1 if self.config.last_parsed_page is None else self.config.last_parsed_page
 
-        all_filtered_links = []
-
-        for page in range(count, self.config.last_page):
+        for page in range(current_page, self.config.last_page + 1):
             self.__update_headers()
             try:
-                request = requests.get(f"{self.url}{count}/", headers=self.headers)
+                request = requests.get(f"{self.url}{current_page}/", headers=self.headers)
                 request.raise_for_status()
                 if request.status_code == 200:
                     content_items = self.__parse_elements(
                         request, 'div', 'b-content__inline_item', 'find_all')
                     filtered_links = [content_item.get('data-url') for content_item in content_items]
-                    all_filtered_links.extend(filtered_links)
-                    count += 1
+                    self.file_handler.append_links(filtered_links)
+                    current_page += 1
 
             except Exception as e:
-                self.config._update_pages_info(last_parsed_page=count)
+                self.file_handler.close()
+                self.config._update_pages_info(last_parsed_page=current_page)
                 print(e)
             except KeyboardInterrupt:
-                self.config._update_pages_info(last_parsed_page=count)
+                self.file_handler.close()
+                self.config._update_pages_info(last_parsed_page=current_page)
                 sys.exit(0)
 
-        return all_filtered_links
+        self.file_handler.close()
 
 
 link_collector = LinkCollector()
-print(link_collector.collect_pages())
+print(link_collector.config.page_buffer_size)

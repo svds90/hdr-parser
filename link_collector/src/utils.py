@@ -14,6 +14,7 @@ class CollectorConfig:
         self.content_type = self._get_content_type()
         self.enabled_domains, self.primary_domain, self.secondary_domains = self._get_domains()
         self.first_page, self.last_page, self.last_parsed_page = self._get_pages_info()
+        self.page_buffer_size = self._get_page_buffer_size()
 
     def _load_config(self, **kwargs):
         try:
@@ -39,6 +40,9 @@ class CollectorConfig:
 
     def _get_content_type(self):
         return self.__collector_config['content_type']
+
+    def _get_page_buffer_size(self):
+        return self.__collector_config['page_buffer_size']
 
     def _get_pages_info(self):
 
@@ -74,7 +78,35 @@ class ContentLink:
         self.__content_link = self._generate()
 
     def _generate(self):
-        return f"https://{self.base_url}/{self.content_type}/best/page/"
+        return f"https://{self.base_url}/{self.content_type}/page/"
 
     def __str__(self):
         return self.__content_link
+
+
+class LinkFileHandler:
+    def __init__(self, filename, page_buffer_size):
+        self.filename = filename
+        self.buffered_links = []
+        self.buffered_pages = 0
+        self.file = open(self.filename, "a")
+        self.page_buffer_size = page_buffer_size
+
+    def append_links(self, links):
+        self.buffered_links.extend(links)
+        self.buffered_pages += 1
+        if self.buffered_pages == self.page_buffer_size:
+            self._write_to_file()
+
+    def _write_to_file(self):
+        self.file.write("\n".join(self.buffered_links) + "\n")
+        self.buffered_pages = 0
+        self.buffered_links = []
+
+    def flush(self):
+        if self.buffered_links:
+            self._write_to_file()
+
+    def close(self):
+        self.flush()
+        self.file.close()
