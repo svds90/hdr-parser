@@ -1,0 +1,31 @@
+{
+    "content_type": "films",
+    "page_buffer_size": 10,
+    "page_range": {
+        "first_page": 1,
+        "last_page": 1381,
+        "last_parsed_page": 1382
+    },
+    "domains": [
+        {
+            "url": "hdrezka.club",
+            "primary": true,
+            "enabled": true
+        },
+        {
+            "url": "hdrezka.tv",
+            "primary": false,
+            "enabled": true
+        },
+        {
+            "url": "hdrezka.ag",
+            "primary": false,
+            "enabled": true
+        },
+        {
+            "url": "hdrezka.me",
+            "primary": false,
+            "enabled": false
+        }
+    ]
+}

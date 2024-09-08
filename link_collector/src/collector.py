@@ -48,7 +48,7 @@ class LinkCollector:
         else:
             return None
 
-    def collect_pages(self, start=None, stop=None):
+    def collect_pages(self):
         current_page = 1 if self.config.last_parsed_page is None else self.config.last_parsed_page
 
         for page in range(current_page, self.config.last_page + 1):
@@ -60,20 +60,23 @@ class LinkCollector:
                     content_items = self.__parse_elements(
                         request, 'div', 'b-content__inline_item', 'find_all')
                     filtered_links = [content_item.get('data-url') for content_item in content_items]
-                    self.file_handler.append_links(filtered_links)
+                    self.file_handler.append_links(filtered_links, current_page)
                     current_page += 1
 
             except Exception as e:
                 self.file_handler.close()
                 self.config._update_pages_info(last_parsed_page=current_page)
                 print(e)
+                break
             except KeyboardInterrupt:
                 self.file_handler.close()
                 self.config._update_pages_info(last_parsed_page=current_page)
                 sys.exit(0)
 
+        self.config._update_pages_info(last_parsed_page=current_page)
         self.file_handler.close()
 
 
 link_collector = LinkCollector()
-print(link_collector.config.page_buffer_size)
+
+link_collector.collect_pages()
