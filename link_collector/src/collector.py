@@ -48,7 +48,7 @@ class LinkCollector:
         else:
             return None
 
-    def collect_pages(self):
+    def collect_links(self):
         current_page = 1 if self.config.last_parsed_page is None else self.config.last_parsed_page
 
         for page in range(current_page, self.config.last_page + 1):
@@ -73,10 +73,36 @@ class LinkCollector:
                 self.config._update_pages_info(last_parsed_page=current_page)
                 sys.exit(0)
 
-        self.config._update_pages_info(last_parsed_page=current_page)
+        self.config._update_pages_info(last_parsed_page=current_page if current_page <
+                                       self.config.last_page else self.config.last_page)
         self.file_handler.close()
+
+    def update_links(self):
+        first_page = self.config.first_page
+        last_parsed_link = self.file_handler.get_last_parsed_link()
+
+        while True:
+            self.__update_headers()
+            request = requests.get(f"{self.url}{first_page}/", headers=self.headers)
+            request.raise_for_status()
+            if request.status_code == 200:
+                content_items = self.__parse_elements(request, 'div', 'b-content__inline_item', 'find_all')
+                filtered_links = [content_item.get('data-url') for content_item in content_items]
+                updated_links = []
+
+                for link in filtered_links:
+                    if link == last_parsed_link.strip():
+                        break
+                    updated_links.append(link)
+                else:
+                    first_page += 1
+                    self.file_handler.append_links(reversed(updated_links))
+                    continue
+
+                self.file_handler.close()
+                break
 
 
 link_collector = LinkCollector()
 
-link_collector.collect_pages()
+link_collector.update_links()

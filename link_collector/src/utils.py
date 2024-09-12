@@ -91,17 +91,23 @@ class LinkFileHandler:
         self.buffered_pages = 0
         self.file = open(self.filename, "a")
         self.page_buffer_size = page_buffer_size
+        self.last_parsed_link = None
 
-    def append_links(self, links, current_page):
+    def get_last_parsed_link(self):
+        with open('links.txt', 'rb') as f:
+            f.seek(-2, 2)
+            while f.read(1) != b'\n':
+                f.seek(-2, 1)
+            last_line = f.readline().decode()
+            return last_line
+
+    def append_links(self, links, current_page=None):
         self.buffered_links.extend(links)
         self.buffered_pages += 1
-        print(f"page {current_page} links {len(links)} buffered pages {
-              self.buffered_pages} buffered links {len(self.buffered_links)}")
         if self.buffered_pages == self.page_buffer_size:
             self._write_to_file()
 
     def _write_to_file(self):
-        print("=============ЗАПИСЬ БУФЕРА================")
         self.file.write("\n".join(self.buffered_links) + "\n")
         self.buffered_pages = 0
         self.buffered_links = []
