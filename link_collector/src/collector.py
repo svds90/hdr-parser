@@ -92,6 +92,7 @@ class LinkCollector:
 
                 for link in filtered_links:
                     if link == last_parsed_link.strip():
+                        self.file_handler.append_links(reversed(updated_links))
                         break
                     updated_links.append(link)
                 else:
