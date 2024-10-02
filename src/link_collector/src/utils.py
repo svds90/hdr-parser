@@ -1,6 +1,7 @@
 from pathlib import Path
 import logging
 import json
+import tempfile
 
 
 class CollectorConfig:
@@ -15,6 +16,7 @@ class CollectorConfig:
         self.enabled_domains, self.primary_domain, self.secondary_domains = self._get_domains()
         self.first_page, self.last_page, self.last_parsed_page = self._get_pages_info()
         self.page_buffer_size = self._get_page_buffer_size()
+        self.temp_file_prefix, self.temp_file_suffix = self._get_tmp_filename()
 
     def _load_config(self, **kwargs):
         try:
@@ -37,6 +39,9 @@ class CollectorConfig:
                 else:
                     secondary_domains.append(domain_config['url'])
         return enabled_domains, primary_domain, secondary_domains
+
+    def _get_tmp_filename(self):
+        return self.__collector_config['temp_file']['prefix'], self.__collector_config['temp_file']['suffix']
 
     def _get_content_type(self):
         return self.__collector_config['content_type']
@@ -112,6 +117,16 @@ class LinkFileHandler:
         self.buffered_pages = 0
         self.buffered_links = []
 
+    def merge_files(self, temp_file_handler):
+        temp_file_handler.temp_file.seek(0)
+        new_links = temp_file_handler.temp_file.readlines()
+
+        if new_links:
+            self.file.writelines(reversed(new_links))
+
+        temp_file_handler.close()
+        self.close()
+
     def flush(self):
         if self.buffered_links:
             self._write_to_file()
@@ -119,3 +134,29 @@ class LinkFileHandler:
     def close(self):
         self.flush()
         self.file.close()
+
+
+class TempFileHandler:
+    def __init__(self, prefix: str, suffix: str) -> None:
+        try:
+            self.temp_file = tempfile.NamedTemporaryFile(
+                delete=False,
+                mode='w+t',
+                prefix=prefix,
+                suffix=suffix
+            )
+        except Exception as e:
+            pass
+        else:
+            self.tempfile_directory = tempfile.gettempdir()
+
+    def write_to_file(self, links: list):
+        if not links:
+            return
+
+        self.temp_file.write('\n'.join(links) + '\n')
+        self.temp_file.flush()
+
+    def close(self):
+        self.temp_file.flush()
+        self.temp_file.close()

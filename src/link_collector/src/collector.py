@@ -1,4 +1,4 @@
-from utils import CollectorConfig, ContentLink, LinkFileHandler
+from utils import CollectorConfig, ContentLink, LinkFileHandler, TempFileHandler
 from fake_useragent import UserAgent
 
 import logging
@@ -78,6 +78,7 @@ class LinkCollector:
         self.file_handler.close()
 
     def update_links(self):
+        temp_file_handler = TempFileHandler(self.config.temp_file_prefix, self.config.temp_file_suffix)
         first_page = self.config.first_page
         last_parsed_link = self.file_handler.get_last_parsed_link()
 
@@ -92,15 +93,15 @@ class LinkCollector:
 
                 for link in filtered_links:
                     if link == last_parsed_link.strip():
-                        self.file_handler.append_links(reversed(updated_links))
+                        temp_file_handler.write_to_file(updated_links)
                         break
                     updated_links.append(link)
                 else:
                     first_page += 1
-                    self.file_handler.append_links(reversed(updated_links))
+                    temp_file_handler.write_to_file(updated_links)
                     continue
 
-                self.file_handler.close()
+                self.file_handler.merge_files(temp_file_handler)
                 break
 
 
