@@ -11,6 +11,11 @@
         "prefix": "hdr_",
         "suffix": ".txt"
     },
+    "logging": {
+        "log_level": "info",
+        "log_filename": "link_collector.log",
+        "log_filemode": "a"
+    },
     "domains": [
         {
             "url": "hdrezka.club",

@@ -1,13 +1,10 @@
 from utils import CollectorConfig, ContentLink, LinkFileHandler, TempFileHandler
 from fake_useragent import UserAgent
 
-import logging
 import requests
 import lxml
 import sys
 from bs4 import BeautifulSoup
-
-logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s:%(message)s')
 
 
 class LinkCollector:

@@ -1,5 +1,4 @@
 from pathlib import Path
-import logging
 import json
 import tempfile
 
@@ -24,7 +23,6 @@ class CollectorConfig:
                 config = json.load(f)
             return config
         except Exception as e:
-            logging.error(f"Error loading configuration from {self.cfg_path}: {e.__class__.__name__} - {e}")
             return {}
 
     def _get_domains(self):
