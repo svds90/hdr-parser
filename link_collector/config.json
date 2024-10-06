@@ -13,6 +13,7 @@
     },
     "logging": {
         "log_level": "info",
+        "logger_name": "link_collector",
         "log_filename": "link_collector.log",
         "log_filemode": "a"
     },

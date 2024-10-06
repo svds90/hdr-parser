@@ -5,3 +5,5 @@ links.txt
 b_links.txt
 links
 kafka
+*.log
+link_collector/src/log_service.py
