@@ -1,5 +1,4 @@
 import logging
-import requests
 
 
 class CommonLogger:
@@ -33,7 +32,7 @@ class CommonLogger:
         file_handler = logging.FileHandler(f"{self.log_dir}/{self.log_filename}", self.log_filemode)
         file_handler.setLevel(getattr(logging, self.file_handler_log_level))
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)-7s - %(message)s - [%(filename)s]')
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s - [%(filename)s]')
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
@@ -43,30 +42,6 @@ class CommonLogger:
         console_handler = logging.StreamHandler()
         console_handler.setLevel(getattr(logging, self.console_handler_log_level))
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)-7s - %(message)s - [%(filename)s]')
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s - [%(filename)s]')
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
-
-
-settings = {
-    "logger_name": "link_collector",
-    "log_dir": "/var/log/hdr_parser",
-    "log_filename": "link_collector.log",
-    "log_filemode": "a",
-    "log_level": {
-        "common": "info",
-        "file_handler": "info",
-        "console_handler": "info"
-    }
-}
-
-r = requests.get("https://www.google.com")
-
-mylogger = CommonLogger(settings)
-
-mylogger.logger.info('some info')
-
-try:
-    a = 10 / 0
-except Exception as e:
-    mylogger.logger.error('%s', e, exc_info=e)

@@ -16,6 +16,7 @@ class CollectorConfig:
         self.first_page, self.last_page, self.last_parsed_page = self._get_pages_info()
         self.page_buffer_size = self._get_page_buffer_size()
         self.temp_file_prefix, self.temp_file_suffix = self._get_tmp_filename()
+        self.logging_settings = self._get_logging_settings()
 
     def _load_config(self, **kwargs):
         try:
@@ -24,6 +25,9 @@ class CollectorConfig:
             return config
         except Exception as e:
             return {}
+
+    def _get_logging_settings(self):
+        return self.__collector_config["logging"]
 
     def _get_domains(self):
 
@@ -154,6 +158,12 @@ class TempFileHandler:
 
         self.temp_file.write('\n'.join(links) + '\n')
         self.temp_file.flush()
+
+    def get_first_link(self):
+        self.temp_file.flush()
+        self.temp_file.seek(0)
+
+        return self.temp_file.readline().strip()
 
     def close(self):
         self.temp_file.flush()
