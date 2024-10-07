@@ -12,8 +12,13 @@
         "suffix": ".txt"
     },
     "logging": {
-        "log_level": "info",
+        "log_level": {
+            "common": "info",
+            "file_handler": "info",
+            "console_handler": "info"
+        },
         "logger_name": "link_collector",
+        "log_dir": "/var/log/hdr_parser",
         "log_filename": "link_collector.log",
         "log_filemode": "a"
     },
