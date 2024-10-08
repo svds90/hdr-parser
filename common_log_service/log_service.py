@@ -32,7 +32,7 @@ class CommonLogger:
         file_handler = logging.FileHandler(f"{self.log_dir}/{self.log_filename}", self.log_filemode)
         file_handler.setLevel(getattr(logging, self.file_handler_log_level))
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s - [%(filename)s]')
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s - [%(filename)s]', datefmt='%d.%m.%y %H:%M:%S')
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
@@ -42,6 +42,6 @@ class CommonLogger:
         console_handler = logging.StreamHandler()
         console_handler.setLevel(getattr(logging, self.console_handler_log_level))
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s - [%(filename)s]')
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s - [%(filename)s]', datefmt='%d.%m.%y %H:%M:%S')
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
