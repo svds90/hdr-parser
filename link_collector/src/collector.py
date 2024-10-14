@@ -128,6 +128,6 @@ class LinkCollector:
                 break
 
 
-link_collector = LinkCollector()
-
-link_collector.update_links()
+if __name__ == "__main__":
+    link_collector = LinkCollector()
+    link_collector.update_links()
